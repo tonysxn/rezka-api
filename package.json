@@ -1,0 +1,23 @@
+{
+  "name": "rezka-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hdrezka",
+    "rezka",
+    "api"
+  ],
+  "author": "neverlxsss",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "base-64": "^1.0.0",
+    "js-base64": "^3.7.5",
+    "node-html-parser": "^6.1.5"
+  }
+}
