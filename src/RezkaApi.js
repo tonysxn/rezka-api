@@ -4,15 +4,16 @@ import base64 from "base-64";
 import {product} from "./utils.js";
 
 export class RezkaApi {
-    constructor(url) {
+    parse = async (url) => {
         if (!url) {
             throw new Error("URL is required");
         }
+        if (!url.includes("https://rezka.ag/") || !url.includes(".html")) {
+            throw new Error("Incorrect url");
+        }
 
         this.url = url;
-    }
 
-    init = async () => {
         const response = await axios.get(this.url);
 
         if (response.status !== 200) {
@@ -23,6 +24,33 @@ export class RezkaApi {
         this.root = nodeHtmlParser.parse(this.page);
     }
 
+    search = async (query) => {
+        let results = [];
+
+        const response = await axios.post(
+            'https://rezka.ag/engine/ajax/search.php',
+            new URLSearchParams({
+                'q': query
+            })
+        );
+
+        if (response.status !== 200) {
+            throw new Error("Failed to get search results");
+        }
+
+        const root = nodeHtmlParser.parse(response.data);
+        const searchResultsTags = root.getElementsByTagName("li");
+
+        searchResultsTags.forEach(searchResultsTag => {
+            const url = searchResultsTag.querySelector("a").getAttribute("href");
+            const title = searchResultsTag.querySelector(".enty").innerText.trim();
+
+            results.push({url, title});
+        });
+
+        return results;
+    }
+
     id = () => {
         return this.root.getElementById("user-favorites-holder").getAttribute("data-post_id");
     }
@@ -31,12 +59,35 @@ export class RezkaApi {
         return this.root.querySelector(".b-post__title").innerText.trim();
     }
 
+    description = () => {
+        return this.root.querySelector(".b-post__description_text").innerText.trim();
+    }
+
     origTitle = () => {
         return this.root.querySelector(".b-post__origtitle").innerText.trim();
     }
 
     infoLast = () => {
         return this.root.querySelector(".b-post__infolast").innerText.trim();
+    }
+
+    info = () => {
+        let ready = [];
+        const table = this.root.querySelector(".b-post__info");
+
+        const rows = table.getElementsByTagName("tr");
+
+        rows.forEach(row => {
+            const key = row.querySelector("h2").innerText ?? null;
+            const tdElements = row.getElementsByTagName("td");
+
+            if (tdElements.length === 2) {
+                const value = tdElements[1].innerText.trim();
+                ready.push({key, value});
+            }
+        });
+
+        return ready;
     }
 
     translations = () => {
@@ -56,6 +107,11 @@ export class RezkaApi {
         });
 
         return translations;
+    }
+
+    thumbnail = () => {
+        const thumbnailRoot = this.root.querySelector(".b-sidecover");
+        return thumbnailRoot.querySelector("img").getAttribute("src");
     }
 
     seasons = () => {

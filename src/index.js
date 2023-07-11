@@ -1,9 +1,14 @@
 import {RezkaApi} from "./RezkaApi.js";
 
 const main = async () => {
-    // Create and init parser
-    const rezka = new RezkaApi("https://rezka.ag/series/thriller/9364-mister-robot-2015.html")
-    await rezka.init();
+    // Create object
+    const rezka = new RezkaApi();
+
+    // Search by query
+    const results = await rezka.search("мистер робот")
+
+    await rezka.parse(results[0].url);
+    console.log(rezka.thumbnail());
 
     // Get translations
     const translations = rezka.translations();
