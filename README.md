@@ -15,7 +15,7 @@ npm i rezka-api
 const rezka = new RezkaApi();
 
 // Search
-const results = await rezka.search("мистер робот")
+const results = await rezka.search("mr robot")
 
 // Parse page
 await rezka.parse(url);
