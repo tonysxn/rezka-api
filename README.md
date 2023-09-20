@@ -24,7 +24,7 @@ await rezka.parse(url);
 id() - get id
 title() - get title
 origTitle() - get original title
-descriptino() - get description
+description() - get description
 infoLast() - get last release date
 info() - get info object (from table like released date and etc.)
 translations() - get available translations
